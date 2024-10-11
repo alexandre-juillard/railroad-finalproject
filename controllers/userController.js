@@ -1,56 +1,64 @@
-const brcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const Counter = require('../models/Counter');
+const User = require('../models/userModel');
 
-async function getNextSequenceValue(sequenceName) {
-    const sequenceDocument = await Counter.findByIdAndUpdate(
-        sequenceName,
-        { $inc: { seq: 1 } },
-        { new: true, upsert: true }
-    );
-    return sequenceDocument.seq;
-}
-
-exports.register = async (req, res) => {
-    const { username, email, password } = req.body;
-
+exports.getAllUsers = async (req, res) => {
     try {
-        // Vérifier si l'utilisateur existe déjà
-        const userExists = await User.findOne({ username });
-        if (userExists) {
-            return res.status(400).json({ message: 'Utilisateur déjà existant.' });
+        const loggedUserRole = req.user.role;
+
+        if (loggedUserRole !== 'admin') {
+            const users = await User.find();
+            res.status(200).json(users);
+        } else {
+            res.status(403).json({ message: 'Vous n\'êtes pas autorisé à accéder à cette ressource.' });
         }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs.', error });
+    }
+};
 
-        // Vérifier si l'email existe déjà
-        const emailExists = await User.findOne({ email });
-        if (emailExists) {
-            return res.status(400).json({ message: 'Email déjà existant.' });
+exports.getOneUser = async (req, res) => {
+    try {
+        const loggedUserRole = req.user.role;
+
+        if (loggedUserRole !== 'admin') {
+            const user = await User.findById(req.params.id);
+            res.status(200).json(user);
+        } else {
+            res.status(403).json({ message: 'Vous n\'êtes pas autorisé à accéder à cette ressource.' });
         }
+    } catch (error) {
+        res.status(404).json({ message: 'Utilisateur inconnu', error });
+    }
+};
 
-        //Hasher le mot de passe
-        const hashedPassword = await brcrypt.hash(password, 10);
-        const userId = await getNextSequenceValue('userId');
+exports.updateUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const loggedUser = req.user._id;
+        const loggedUserRole = req.user.role;
 
-        // Créer un nouvel utilisateur
-        const newUser = new User({
-            _id: userId,
-            username,
-            email,
-            password: hashedPassword,
-        });
+        if (loggedUser === userId || loggedUserRole === 'admin') {
+            const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true, runValidators: true });
+            res.status(200).json(updatedUser);
+        } else {
+            res.status(403).json({ message: 'Vous n\'êtes pas autorisé à modifier cet utilisateur.' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la modification de l\'utilisateur.', error });
+    }
+};
 
-        await newUser.save();
+exports.deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const loggedUser = req.user._id;
 
-        res.status(201).json({
-            message: 'Utilisateur créé avec succès.',
-            user: {
-                _id: newUser._id,
-                username: newUser.username,
-                email: newUser.email,
-            }
-        });
-    } catch {
-        res.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur.', error });
+        if (loggedUser === userId) {
+            await User.findByIdAndDelete(userId);
+            res.status(200).json({ message: 'Utilisateur supprimé avec succès.' });
+        } else {
+            res.status(403).json({ message: 'Vous n\'êtes pas autorisé à supprimer cet utilisateur.' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la suppression de l\'utilisateur.', error });
     }
 };
