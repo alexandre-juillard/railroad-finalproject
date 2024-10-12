@@ -38,7 +38,7 @@ exports.updateUser = async (req, res) => {
 
         if (loggedUser === userId || loggedUserRole === 'admin') {
             const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true, runValidators: true });
-            res.status(200).json(updatedUser);
+            res.status(200).json({ message: 'Utilisateur modifié', updatedUser });
         } else {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à modifier cet utilisateur.' });
         }
