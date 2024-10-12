@@ -1,4 +1,5 @@
 const Train = require('../models/trainModel');
+const Station = require('../models/stationModel');
 const Counter = require('../models/Counter');
 
 async function getNextSequenceValue(sequenceName) {
@@ -13,22 +14,27 @@ async function getNextSequenceValue(sequenceName) {
 exports.createTrain = async (req, res) => {
     const {
         name,
-        start_station,
-        end_station,
         time_of_departure,
         time_of_arrival
     } = req.body;
 
     try {
         const loggedUserRole = req.user.role;
-        if (loggedUserRole !== 'admin') {
+        if (loggedUserRole === 'admin') {
             const trainId = await getNextSequenceValue('trainId');
+
+            const start_station = await Station.findOne({ name: start_station });
+            const end_station = await Station.findOne({ name: end_station });
+
+            if (!start_station || !end_station) {
+                return res.status(404).json({ message: 'Une ou plusieurs stations spécifiées sont introuvables.' });
+            }
 
             const newTrain = new Train({
                 _id: trainId,
                 name,
-                start_station,
-                end_station,
+                start_station: start_station._id,
+                end_station: end_station._id,
                 time_of_departure,
                 time_of_arrival
             });
