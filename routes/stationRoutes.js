@@ -6,4 +6,10 @@ const auth = require('../middleware/auth');
 
 router.post('/stations', auth, upload.single('image'), resizeImage, stationCtrl.createStation);
 
+router.get('/stations', auth, stationCtrl.getAllStations);
+
+router.put('/stations/:id', auth, upload.single('image'), resizeImage, stationCtrl.updateStation);
+
+router.delete('/stations/:id', auth, stationCtrl.deleteStation);
+
 module.exports = router;
