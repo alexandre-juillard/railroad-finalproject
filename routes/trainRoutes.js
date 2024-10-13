@@ -5,9 +5,9 @@ const trainCtrl = require('../controllers/trainController');
 
 router.post('/trains', auth, trainCtrl.createTrain);
 
-router.get('/trains', auth, trainCtrl.getAllTrains);
+router.get('/trains', trainCtrl.getAllTrains);
 
-router.get('/trains/:id', auth, trainCtrl.getOneTrain);
+router.get('/trains/:id', trainCtrl.getOneTrain);
 
 router.put('/trains/:id', auth, trainCtrl.updateTrain);
 
