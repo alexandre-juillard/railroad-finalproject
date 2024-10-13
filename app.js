@@ -14,7 +14,6 @@ var app = express();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
-const { default: mongoose } = require('mongoose');
 
 // Configuration Swagger pour swagger-jsdoc
 const swaggerOptions = {

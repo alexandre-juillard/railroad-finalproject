@@ -1,5 +1,5 @@
-const Train = require('../models/trainModel');
-const Station = require('../models/stationModel');
+const Train = require('../models/Train');
+const Station = require('../models/Station');
 const Counter = require('../models/Counter');
 
 async function getNextSequenceValue(sequenceName) {
