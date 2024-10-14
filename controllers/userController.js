@@ -89,9 +89,11 @@ exports.login = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const loggedUserRole = req.user.role;
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
 
-        if (loggedUserRole !== 'admin') {
+        if (loggedUserRole === 'admin') {
             const users = await User.find();
             res.status(200).json(users);
         } else {
@@ -104,26 +106,46 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getOneUser = async (req, res) => {
     try {
-        const loggedUserRole = req.user.role;
+        const userId = req.params.id; // Id du user en paramètres
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
 
-        if (loggedUserRole !== 'admin') {
-            const user = await User.findOne({ _id: req.params.id });
+        console.log(`Requested User Logged: ${loggedUser}`);
+        console.log(`Logged User Role: ${loggedUserRole}`);
+        console.log(`Requested User ID: ${userId}`);
+        console.log(`Logged User ID: ${loggedUserId}`);
+
+        if (loggedUserRole === 'admin' || loggedUserId.toString() === userId.toString()) {
+            const user = await User.findById(userId);
+            if (!user) {
+                console.log('User not found');
+                return res.status(404).json({ message: 'Utilisateur inconnu' });
+            }
+            console.log('User found:', user);
             res.status(200).json(user);
         } else {
+            console.log('Access denied');
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à accéder à cette ressource.' });
         }
     } catch (error) {
-        res.status(404).json({ message: 'Utilisateur inconnu', error });
+        console.error('Error retrieving user:', error);
+        res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur.', error });
     }
 };
 
 exports.updateUser = async (req, res) => {
     try {
-        const userId = req.params.id;
-        const loggedUser = req.user._id;
-        const loggedUserRole = req.user.role;
+        const userId = req.params.id; // Id du user en paramètres
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
 
-        if (loggedUser === userId || loggedUserRole === 'admin') {
+        if (loggedUserId.toString() === userId.toString() || loggedUserRole === 'admin') {
+            const user = await User.findById(userId);
+            if (!user) {
+                return res.status(404).json({ message: 'Utilisateur inconnu' });
+            }
             const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true, runValidators: true });
             res.status(200).json({ message: 'Utilisateur modifié', updatedUser });
         } else {
@@ -137,9 +159,9 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const loggedUser = req.user._id;
+        const loggedUserId = req.auth.userId;
 
-        if (loggedUser === userId) {
+        if (loggedUserId.toString() === userId.toString()) {
             await User.findByIdAndDelete(userId);
             res.status(200).json({ message: 'Utilisateur supprimé avec succès.' });
         } else {

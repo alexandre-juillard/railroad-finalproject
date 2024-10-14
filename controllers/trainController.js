@@ -19,7 +19,10 @@ exports.createTrain = async (req, res) => {
     } = req.body;
 
     try {
-        const loggedUserRole = req.user.role;
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
+
         if (loggedUserRole === 'admin') {
             const trainId = await getNextSequenceValue('trainId');
 
@@ -82,7 +85,9 @@ exports.getAllTrains = async (req, res) => {
 
         //Récupérer les trains avec filtre et limite
         const trains = await Train.find(filter).limit(parseInt(limit));
-
+        if (trains.length === 0) {
+            return res.status(404).json({ message: 'Aucun train correspondant à cette recherche.' });
+        }
         res.status(200).json(trains);
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la récupération des trains.', error });
@@ -92,6 +97,9 @@ exports.getAllTrains = async (req, res) => {
 exports.getOneTrain = async (req, res) => {
     try {
         const train = await Train.findById(req.params.id);
+        if (!train) {
+            return res.status(404).json({ message: 'Aucun train correspondant à cette recherche.' });
+        }
         res.status(200).json(train);
     } catch (error) {
         res.status(404).json({ message: 'Train inconnu', error });
@@ -100,15 +108,21 @@ exports.getOneTrain = async (req, res) => {
 
 exports.updateTrain = async (req, res) => {
     try {
-        const loggedUserRole = req.user.role;
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
         const trainId = req.params.id;
+
         if (loggedUserRole === 'admin') {
+            const train = await Train.findById(trainId);
+            if (!train) {
+                return res.status(404).json({ message: 'Train inconnu' });
+            }
             const updatedTrain = await Train.findByIdAndUpdate(trainId, req.body, { new: true, runValidators: true });
             res.status(200).json({ message: 'Train modifié', updatedTrain });
         } else {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à modifier ce train.' });
         }
-
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la modification du train.', error });
     }
@@ -116,9 +130,15 @@ exports.updateTrain = async (req, res) => {
 
 exports.deleteTrain = async (req, res) => {
     try {
-        const loggedUserRole = req.user.role;
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
         const trainId = req.params.id;
         if (loggedUserRole === 'admin') {
+            const train = await Train.findById(trainId);
+            if (!train) {
+                return res.status(404).json({ message: 'Train inconnu' });
+            }
             await Train.findByIdAndDelete(trainId);
             res.status(200).json({ message: 'Train supprimé avec succès.' });
         } else {

@@ -15,7 +15,10 @@ exports.createStation = async (req, res) => {
     const image = req.files ? req.file.path : null
 
     try {
-        const loggedUserRole = req.user.role;
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
+
         if (loggedUserRole === 'admin') {
             const stationId = await getNextSequenceValue('stationId');
 
@@ -58,6 +61,9 @@ exports.getAllStations = async (req, res) => {
         }
 
         const stations = await Station.find(filter);
+        if (stations.length === 0) {
+            return res.status(404).json({ message: 'Aucune gare trouvée.' });
+        }
         res.status(200).json(stations);
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la récupération des stations.', error });
@@ -66,10 +72,16 @@ exports.getAllStations = async (req, res) => {
 
 exports.updateStation = async (req, res) => {
     try {
-        const loggedUserRole = req.user.role;
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
         const stationId = req.params.id;
 
         if (loggedUserRole === 'admin') {
+            const station = await Station.findById(stationId);
+            if (!station) {
+                return res.status(404).json({ message: 'Gare inconnue.' });
+            }
             const updatedStation = await Station.findByIdAndUpdate(stationId, req.body, { new: true, runValidators: true });
             res.status(200).json({ message: 'Station modifiée', updatedStation });
         } else {
@@ -82,16 +94,18 @@ exports.updateStation = async (req, res) => {
 
 exports.deleteStation = async (req, res) => {
     try {
-        const loggedUserRole = req.user.role;
+        const loggedUserId = req.auth.userId; //ID du user connecté
+        const loggedUser = await User.findById(loggedUserId); // User connecté
+        const loggedUserRole = loggedUser.role; // Rôle du user connecté
         const stationId = req.params.id;
 
         if (loggedUserRole === 'admin') {
-            const deletedStation = await Station.findByIdAndDelete(stationId);
-            if (!deletedStation) {
-                return res.status(404).json({ message: 'Station inconnue.' });
-            } else {
-                res.status(200).json({ message: 'Station et trains associés supprimés.' });
+            const station = await Station.findById(stationId);
+            if (!station) {
+                return res.status(404).json({ message: 'Gare inconnue.' });
             }
+            await Station.findByIdAndDelete(stationId);
+            res.status(200).json({ message: 'Station et trains associés supprimés.' });
         } else {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à supprimer cette station.' });
         }
