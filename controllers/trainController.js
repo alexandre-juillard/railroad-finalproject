@@ -1,6 +1,7 @@
 const Train = require('../models/Train');
 const Station = require('../models/Station');
 const Counter = require('../models/Counter');
+const User = require('../models/User');
 
 async function getNextSequenceValue(sequenceName) {
     const sequenceDocument = await Counter.findByIdAndUpdate(
@@ -14,6 +15,8 @@ async function getNextSequenceValue(sequenceName) {
 exports.createTrain = async (req, res) => {
     const {
         name,
+        start_station,
+        end_station,
         time_of_departure,
         time_of_arrival
     } = req.body;
@@ -26,8 +29,9 @@ exports.createTrain = async (req, res) => {
         if (loggedUserRole === 'admin') {
             const trainId = await getNextSequenceValue('trainId');
 
-            const start_station = await Station.findOne({ name: start_station });
-            const end_station = await Station.findOne({ name: end_station });
+            // Rechercher les gares par leur nom
+            const startStation = await Station.findOne({ name: start_station });
+            const endStation = await Station.findOne({ name: end_station });
 
             if (!start_station || !end_station) {
                 return res.status(404).json({ message: 'Une ou plusieurs stations spécifiées sont introuvables.' });
@@ -36,8 +40,8 @@ exports.createTrain = async (req, res) => {
             const newTrain = new Train({
                 _id: trainId,
                 name,
-                start_station: start_station._id,
-                end_station: end_station._id,
+                start_station: startStation._id,
+                end_station: endStation._id,
                 time_of_departure,
                 time_of_arrival
             });
@@ -59,6 +63,7 @@ exports.createTrain = async (req, res) => {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à créer un train.' });
         }
     } catch (error) {
+        console.log('error :', error);
         res.status(500).json({ message: 'Erreur lors de la création du train.', error });
     }
 }

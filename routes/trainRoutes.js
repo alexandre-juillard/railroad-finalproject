@@ -54,7 +54,7 @@ const trainCtrl = require('../controllers/trainController');
  *         description: Erreur serveur
  */
 
-router.post('/trains', auth, trainCtrl.createTrain);
+router.post('/', auth, trainCtrl.createTrain);
 
 /**
  * @swagger
@@ -110,7 +110,7 @@ router.post('/trains', auth, trainCtrl.createTrain);
  *         description: Erreur serveur
  */
 
-router.get('/trains', auth, trainCtrl.getAllTrains);
+router.get('/', auth, trainCtrl.getAllTrains);
 
 /**
  * @swagger
@@ -140,7 +140,7 @@ router.get('/trains', auth, trainCtrl.getAllTrains);
  *         description: Erreur serveur
  */
 
-router.get('/trains/:id', auth, trainCtrl.getOneTrain);
+router.get('/:id', auth, trainCtrl.getOneTrain);
 
 /**
  * @swagger
@@ -191,7 +191,7 @@ router.get('/trains/:id', auth, trainCtrl.getOneTrain);
  *         description: Erreur serveur
  */
 
-router.put('/trains/:id', auth, trainCtrl.updateTrain);
+router.put('/:id', auth, trainCtrl.updateTrain);
 
 /**
  * @swagger

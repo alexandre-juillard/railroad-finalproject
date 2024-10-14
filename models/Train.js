@@ -5,8 +5,8 @@ const trainSchema = new mongoose.Schema({
     name: { type: String, required: true },
     start_station: { type: mongoose.Schema.Types.Number, ref: 'Station', required: true },
     end_station: { type: mongoose.Schema.Types.Number, ref: 'Station', required: true },
-    time_of_departure: { type: Date, required: true },
-    time_of_arrival: { type: Date, required: true },
+    time_of_departure: { type: String, required: true },
+    time_of_arrival: { type: String, required: true },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 });

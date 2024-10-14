@@ -1,5 +1,6 @@
 const Station = require('../models/Station');
 const Counter = require('../models/Counter');
+const User = require('../models/User');
 
 async function getNextSequenceValue(sequenceName) {
     const sequenceDocument = await Counter.findByIdAndUpdate(
@@ -12,7 +13,9 @@ async function getNextSequenceValue(sequenceName) {
 
 exports.createStation = async (req, res) => {
     const { name, open_hour, close_hour } = req.body;
-    const image = req.files ? req.file.path : null
+    const image = req.file ? req.file.path : null
+    console.log('Req.files: ', req.file);
+    console.log('Req.files.path: ', req.file.path);
 
     try {
         const loggedUserId = req.auth.userId; //ID du user connecté
@@ -45,6 +48,7 @@ exports.createStation = async (req, res) => {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à créer une station.' });
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Erreur lors de la création de la station.', error });
     }
 

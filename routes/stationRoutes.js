@@ -50,7 +50,7 @@ const auth = require('../middleware/auth');
  *         description: Erreur serveur
  */
 
-router.post('/stations', auth, upload.single('image'), resizeImage, stationCtrl.createStation);
+router.post('/', auth, upload.single('image'), resizeImage, stationCtrl.createStation);
 
 /**
  * @swagger
@@ -79,7 +79,7 @@ router.post('/stations', auth, upload.single('image'), resizeImage, stationCtrl.
  *         description: Erreur serveur
  */
 
-router.get('/stations', auth, stationCtrl.getAllStations);
+router.get('/', auth, stationCtrl.getAllStations);
 
 /**
  * @swagger
@@ -127,7 +127,7 @@ router.get('/stations', auth, stationCtrl.getAllStations);
  *         description: Erreur serveur
  */
 
-router.put('/stations/:id', auth, upload.single('image'), resizeImage, stationCtrl.updateStation);
+router.put('/:id', auth, upload.single('image'), resizeImage, stationCtrl.updateStation);
 
 /**
  * @swagger
@@ -155,6 +155,6 @@ router.put('/stations/:id', auth, upload.single('image'), resizeImage, stationCt
  *         description: Erreur serveur
  */
 
-router.delete('/stations/:id', auth, stationCtrl.deleteStation);
+router.delete('/:id', auth, stationCtrl.deleteStation);
 
 module.exports = router;
