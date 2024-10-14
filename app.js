@@ -44,7 +44,7 @@ const swaggerOptions = {
           type: 'object',
           properties: {
             _id: {
-              type: 'string',
+              type: 'integer',
               description: 'ID de l\'utilisateur',
             },
             name: {
@@ -76,6 +76,84 @@ const swaggerOptions = {
           },
           required: ['name', 'email', 'password'],
         },
+        Train: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'integer',
+              description: 'ID du train',
+            },
+            name: {
+              type: 'string',
+              description: 'Nom du train',
+            },
+            start_station: {
+              $ref: '#/components/schemas/Station',
+              description: 'Gare de départ du train',
+            },
+            end_station: {
+              $ref: '#/components/schemas/Station',
+              description: 'Gare d\'arrivée du train',
+            },
+            time_of_departure: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Heure de départ du train',
+            },
+            time_of_arrival: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Heure d\'arrivée du train',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date de création du train',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date de mise à jour du train',
+            },
+          },
+          required: ['name', 'start_station', 'end_station', 'time_of_departure', 'time_of_arrival'],
+        },
+        Station: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'interger',
+              description: 'ID de la gare',
+            },
+            name: {
+              type: 'string',
+              description: 'Nom de la gare',
+            },
+            open_hour: {
+              type: 'string',
+              description: 'Heure d\'ouverture de la gare',
+            },
+            close_hour: {
+              type: 'string',
+              description: 'Heure de fermeture de la gare',
+            },
+            image: {
+              type: 'string',
+              description: 'Image de la gare',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date de création de la gare',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date de mise à jour de la gare',
+            },
+          },
+          required: ['name', 'open_hour', 'close_hour', 'image'],
+        }
       },
     },
     security: [
