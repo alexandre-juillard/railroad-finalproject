@@ -39,6 +39,44 @@ const swaggerOptions = {
           bearerFormat: 'JWT',
         },
       },
+      schemas: {
+        User: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'string',
+              description: 'ID de l\'utilisateur',
+            },
+            name: {
+              type: 'string',
+              description: 'Nom de l\'utilisateur',
+            },
+            email: {
+              type: 'string',
+              description: 'Email de l\'utilisateur',
+            },
+            password: {
+              type: 'string',
+              description: 'Mot de passe de l\'utilisateur',
+            },
+            role: {
+              type: 'string',
+              description: 'Rôle de l\'utilisateur',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date de création de l\'utilisateur',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date de mise à jour de l\'utilisateur',
+            },
+          },
+          required: ['name', 'email', 'password'],
+        },
+      },
     },
     security: [
       {

@@ -107,7 +107,7 @@ exports.getOneUser = async (req, res) => {
         const loggedUserRole = req.user.role;
 
         if (loggedUserRole !== 'admin') {
-            const user = await User.findById(req.params.id);
+            const user = await User.findOne({ _id: req.params.id });
             res.status(200).json(user);
         } else {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à accéder à cette ressource.' });

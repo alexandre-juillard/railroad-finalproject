@@ -95,7 +95,7 @@ router.post('/login', userCtrl.login);
  *         description: Erreur serveur
  */
 
-router.get('/users', auth, userCtrl.getAllUsers);
+router.get('/', auth, userCtrl.getAllUsers);
 
 /**
  * @swagger
@@ -109,7 +109,7 @@ router.get('/users', auth, userCtrl.getAllUsers);
  *       - in: path
  *         name: id
  *         schema:
- *           type: string
+ *           type: integer
  *         required: true
  *         description: L'ID de l'utilisateur
  *     responses:
@@ -127,7 +127,7 @@ router.get('/users', auth, userCtrl.getAllUsers);
  *         description: Erreur serveur
  */
 
-router.get('/users/:id', auth, userCtrl.getOneUser);
+router.get('/:id', auth, userCtrl.getOneUser);
 
 /**
  * @swagger
@@ -141,7 +141,7 @@ router.get('/users/:id', auth, userCtrl.getOneUser);
  *       - in: path
  *         name: id
  *         schema:
- *           type: string
+ *           type: integer
  *         required: true
  *         description: L'ID de l'utilisateur à mettre à jour
  *     requestBody:
@@ -166,7 +166,7 @@ router.get('/users/:id', auth, userCtrl.getOneUser);
  *         description: Erreur serveur
  */
 
-router.put('/users/:id', auth, userCtrl.updateUser);
+router.put('/:id', auth, userCtrl.updateUser);
 
 /**
  * @swagger
@@ -180,7 +180,7 @@ router.put('/users/:id', auth, userCtrl.updateUser);
  *       - in: path
  *         name: id
  *         schema:
- *           type: string
+ *           type: integer
  *         required: true
  *         description: L'ID de l'utilisateur à supprimer
  *     responses:
@@ -194,6 +194,6 @@ router.put('/users/:id', auth, userCtrl.updateUser);
  *         description: Erreur serveur
  */
 
-router.delete('/users/:id', auth, userCtrl.deleteUser);
+router.delete('/:id', auth, userCtrl.deleteUser);
 
 module.exports = router;
