@@ -4,16 +4,18 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/usersRoutes');
+const usersRouter = require('./routes/usersRoutes');
 const stationRouter = require('./routes/stationRoutes');
 const trainRouter = require('./routes/trainRoutes');
 
-var app = express();
+const app = express();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
+//const { default: mongoose } = require('mongoose');
 
 // Configuration Swagger pour swagger-jsdoc
 const swaggerOptions = {
@@ -26,7 +28,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:3000', // L'URL de votre serveur local
+        url: 'http://localhost:3000',
       },
     ],
     components: {
@@ -44,7 +46,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./routes/*.js'], // Indique où trouver les fichiers contenant les annotations
+  apis: ['./routes/*.js'],
 };
 
 // Initialisation de swagger-jsdoc
@@ -66,6 +68,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
