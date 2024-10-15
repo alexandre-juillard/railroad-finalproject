@@ -108,7 +108,7 @@ exports.deleteStation = async (req, res) => {
             if (!station) {
                 return res.status(404).json({ message: 'Gare inconnue.' });
             }
-            await Station.findByIdAndDelete(stationId);
+            await Station.findOneAndDelete({ _id: stationId });
             res.status(200).json({ message: 'Station et trains associés supprimés.' });
         } else {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à supprimer cette station.' });
