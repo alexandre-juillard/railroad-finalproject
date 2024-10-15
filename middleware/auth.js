@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
     try {
         // Récupérer le token de l'en-tête Authorization (format: Bearer <token>)
         const authHeader = req.headers.authorization;
@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
         }
 
         // Vérification du token avec le secret
-        jwt.verify(token, 'RANDOM_TOKEN_SECRET', (error, decodedToken) => {
+        jwt.verify(token, process.env.JWT_SECRET, (error, decodedToken) => {
             if (error) {
                 return res.status(401).json({ message: 'Invalid token' });
             }
@@ -24,6 +24,7 @@ module.exports = (req, res, next) => {
 
             // Stocker les informations du token dans req.auth
             req.auth = { userId: userId, role: role };
+            console.log('req.auth:', req.auth);
 
             // Continuer l'exécution de la route
             next();
@@ -34,3 +35,16 @@ module.exports = (req, res, next) => {
         res.status(401).json({ error: 'Unauthorized request!' });
     }
 };
+
+const authorize = (roles = []) => {
+    return (req, res, next) => {
+        console.log('Checking role:', req.auth);
+        if (!req.auth || !roles.includes(req.auth.role)) {
+            console.log('Access denied. Role:', req.auth ? req.auth.role : 'undefined');
+            return res.status(403).json({ message: 'Accès refusé.' });
+        }
+        next();
+    };
+};
+
+module.exports = { auth, authorize };

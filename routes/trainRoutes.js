@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const { auth, authorize } = require('../middleware/auth');
 const trainCtrl = require('../controllers/trainController');
 
 /**
@@ -54,7 +54,7 @@ const trainCtrl = require('../controllers/trainController');
  *         description: Erreur serveur
  */
 
-router.post('/', auth, trainCtrl.createTrain);
+router.post('/', auth, authorize(['admin']), trainCtrl.createTrain);
 
 /**
  * @swagger
@@ -193,7 +193,7 @@ router.get('/:id', auth, trainCtrl.getOneTrain);
  *         description: Erreur serveur
  */
 
-router.put('/:id', auth, trainCtrl.updateTrain);
+router.put('/:id', auth, authorize(['admin']), trainCtrl.updateTrain);
 
 /**
  * @swagger
@@ -221,6 +221,6 @@ router.put('/:id', auth, trainCtrl.updateTrain);
  *         description: Erreur serveur
  */
 
-router.delete('/trains/:id', auth, trainCtrl.deleteTrain);
+router.delete('/:id', auth, authorize(['admin']), trainCtrl.deleteTrain);
 
 module.exports = router;

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const stationCtrl = require('../controllers/stationController');
 const { upload, resizeImage } = require('../middleware/upload');
-const auth = require('../middleware/auth');
+const { auth, authorize } = require('../middleware/auth');
 /**
  * @swagger
  * tags:
@@ -50,7 +50,7 @@ const auth = require('../middleware/auth');
  *         description: Erreur serveur
  */
 
-router.post('/', auth, upload.single('image'), resizeImage, stationCtrl.createStation);
+router.post('/', auth, authorize(['admin']), upload.single('image'), resizeImage, stationCtrl.createStation);
 
 /**
  * @swagger
@@ -129,7 +129,7 @@ router.get('/', auth, stationCtrl.getAllStations);
  *         description: Erreur serveur
  */
 
-router.put('/:id', auth, upload.single('image'), resizeImage, stationCtrl.updateStation);
+router.put('/:id', auth, authorize(['admin']), upload.single('image'), resizeImage, stationCtrl.updateStation);
 
 /**
  * @swagger
@@ -157,6 +157,6 @@ router.put('/:id', auth, upload.single('image'), resizeImage, stationCtrl.update
  *         description: Erreur serveur
  */
 
-router.delete('/:id', auth, stationCtrl.deleteStation);
+router.delete('/:id', authorize(['admin']), auth, stationCtrl.deleteStation);
 
 module.exports = router;
