@@ -75,6 +75,8 @@ router.post('/', auth, upload.single('image'), resizeImage, stationCtrl.createSt
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Station'
+ *       400:
+ *          description: Aucune gare trouvée
  *       500:
  *         description: Erreur serveur
  */

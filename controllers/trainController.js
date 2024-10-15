@@ -107,7 +107,7 @@ exports.getOneTrain = async (req, res) => {
         }
         res.status(200).json(train);
     } catch (error) {
-        res.status(404).json({ message: 'Train inconnu', error });
+        res.status(500).json({ message: 'Train inconnu', error });
     }
 }
 

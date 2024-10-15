@@ -106,6 +106,8 @@ router.post('/', auth, trainCtrl.createTrain);
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Train'
+ *       404:
+ *          description: Train non trouvé
  *       500:
  *         description: Erreur serveur
  */

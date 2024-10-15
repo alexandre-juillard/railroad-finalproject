@@ -62,17 +62,17 @@ exports.login = async (req, res) => {
         // Vérifier si l'utilisateur existe
         const user = await User.findOne({ email: email });
         if (!user) {
-            return res.status(400).json({ message: 'Utilisateur ou mot de passe incorrect.' });
+            return res.status(401).json({ message: 'Utilisateur ou mot de passe incorrect.' });
         }
 
         // Vérifier si le mot de passe est correct
         const validPassword = await brcrypt.compare(password, user.password);
         if (!validPassword) {
-            return res.status(400).json({ message: 'Utilisateur ou mot de passe incorrect.' });
+            return res.status(401).json({ message: 'Utilisateur ou mot de passe incorrect.' });
         }
 
         //Créer le JWT
-        const token = jwt.sign({ userId: user._id }, 'RANDOM_TOKEN_SECRET', { expiresIn: '24h' });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
         res.status(200).json({
             message: 'Connexion réussie.',
             token,
@@ -162,7 +162,11 @@ exports.deleteUser = async (req, res) => {
         const loggedUserId = req.auth.userId;
 
         if (loggedUserId.toString() === userId.toString()) {
-            await User.findByIdAndDelete(userId);
+            const deletedUser = await User.findByIdAndDelete(userId);
+            if (!deletedUser) {
+                res.status(404).json({ message: 'Utilisateur non trouvé' });
+            }
+
             res.status(200).json({ message: 'Utilisateur supprimé avec succès.' });
         } else {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à supprimer cet utilisateur.' });
