@@ -23,8 +23,11 @@ exports.createTrain = async (req, res) => {
 
     try {
         const loggedUserId = req.auth.userId; //ID du user connecté
+        console.log('Logged User ID:', loggedUserId);
         const loggedUser = await User.findById(loggedUserId); // User connecté
+        console.log('Logged User:', loggedUser);
         const loggedUserRole = loggedUser.role; // Rôle du user connecté
+        console.log('Logged User Role:', loggedUserRole);
 
         if (loggedUserRole === 'admin') {
             const trainId = await getNextSequenceValue('trainId');
