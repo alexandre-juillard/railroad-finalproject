@@ -157,6 +157,6 @@ router.put('/:id', auth, authorize(['admin']), upload.single('image'), resizeIma
  *         description: Erreur serveur
  */
 
-router.delete('/:id', authorize(['admin']), auth, stationCtrl.deleteStation);
+router.delete('/:id', auth, authorize(['admin']), stationCtrl.deleteStation);
 
 module.exports = router;

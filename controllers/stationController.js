@@ -12,12 +12,12 @@ async function getNextSequenceValue(sequenceName) {
 }
 
 exports.createStation = async (req, res) => {
-    const { name, open_hour, close_hour } = req.body;
-    const image = req.file ? req.file.path : null
-    console.log('Req.files: ', req.file);
-    console.log('Req.files.path: ', req.file.path);
-
     try {
+        const { name, open_hour, close_hour } = req.body;
+        const image = req.file ? req.file.path : null;
+        console.log('Req.file:', req.file); // Devrait afficher le fichier téléchargé
+        console.log('Req.body:', req.body);
+
         const loggedUserId = req.auth.userId; //ID du user connecté
         const loggedUser = await User.findById(loggedUserId); // User connecté
         const loggedUserRole = loggedUser.role; // Rôle du user connecté
@@ -48,7 +48,7 @@ exports.createStation = async (req, res) => {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à créer une station.' });
         }
     } catch (error) {
-        console.log(error);
+        console.log('Erreur lors de la création de la station: ', error);
         res.status(500).json({ message: 'Erreur lors de la création de la station.', error });
     }
 
