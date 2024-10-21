@@ -61,9 +61,8 @@ exports.validateTicket = async (req, res) => {
         //Valider le billet
         ticket.validated = true;
         ticket.validationDate = new Date();
-        await ticket.save();
 
-        res.status(200).json({ message: 'Billet validé' });
+        res.status(200).json({ message: 'Billet validé avec succès' });
     } catch (error) {
         console.log('Erreur de validation du billet : ', error);
         res.status(500).json({ message: 'Erreur lors de validation du billet', error });
