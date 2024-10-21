@@ -124,7 +124,7 @@ const swaggerOptions = {
           type: 'object',
           properties: {
             _id: {
-              type: 'interger',
+              type: 'integer',
               description: 'ID de la gare',
             },
             name: {

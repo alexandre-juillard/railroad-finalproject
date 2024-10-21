@@ -44,7 +44,7 @@ describe('User Router Test', () => {
             .send({ username: 'John Doe', email: 'john@example.com', password: 'azerty123' })
             .expect(201)
             .then(response => {
-                console.log('Response body:', response.body);
+                // console.log('Response body:', response.body);
                 assert.equal(typeof response.body, 'object');
                 assert.equal(response.body.user.username, 'John Doe');
                 assert.equal(response.body.user.email, 'john@example.com');
@@ -64,7 +64,7 @@ describe('User Router Test', () => {
             .send({ username: 'John Doe', email: 'john@example.com', password: 'azerty123' })
             .expect(400)
             .then(response => {
-                console.log('Response body:', response.body);
+                // console.log('Response body:', response.body);
                 assert.equal(typeof response.body, 'object');
                 assert.equal(response.body.message, 'Utilisateur déjà existant.');
             });
@@ -90,7 +90,7 @@ describe('User Router Test', () => {
             .send({ username: 'John Doe', password: 'hashedpassword' })
             .expect(200)
             .then(response => {
-                console.log('Response body:', response.body);
+                // console.log('Response body:', response.body);
                 assert.equal(typeof response.body, 'object');
                 assert.equal(response.body.token, 'fake-jwt_token');
             });
@@ -105,7 +105,7 @@ describe('User Router Test', () => {
             .send({ username: 'John Doe', password: 'hashedpassword' })
             .expect(401)
             .then(response => {
-                console.log('Response body:', response.body);
+                // console.log('Response body:', response.body);
                 assert.equal(typeof response.body, 'object');
                 assert.equal(response.body.message, 'Utilisateur ou mot de passe incorrect.');
             });
@@ -128,7 +128,7 @@ describe('User Router Test', () => {
             .send({ username: 'John Doe', password: 'wrongpassword' })
             .expect(401)
             .then(response => {
-                console.log('Response body:', response.body);
+                // console.log('Response body:', response.body);
                 assert.equal(typeof response.body, 'object');
                 assert.equal(response.body.message, 'Utilisateur ou mot de passe incorrect.');
             });

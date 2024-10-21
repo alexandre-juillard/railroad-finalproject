@@ -21,6 +21,18 @@ exports.createTrain = async (req, res) => {
         time_of_arrival
     } = req.body;
 
+    // Validation des données
+    if (!name || typeof name !== 'string' || name.trim() === '') {
+        return res.status(400).json({ message: 'Donnée invalide: le nom est requis et ne peut pas être vide.' });
+    }
+    if (isNaN(Date.parse(time_of_departure))) {
+        return res.status(400).json({ message: 'Donnée invalide: la date doit être valide.' });
+    }
+    if (isNaN(Date.parse(time_of_arrival))) {
+        return res.status(400).json({ message: 'Donnée invalide: la date doit être valide.' });
+    }
+    // format de date valide : YYYY-MM-DDTHH:mm:ss.sssZ
+
     try {
         const loggedUserId = req.auth.userId; //ID du user connecté
         console.log('Logged User ID:', loggedUserId);
@@ -92,12 +104,14 @@ exports.getAllTrains = async (req, res) => {
         if (time_of_arrival) filter.time_of_arrival = time_of_arrival;
 
         //Récupérer les trains avec filtre et limite
-        const trains = await Train.find(filter).limit(parseInt(limit));
+        const trains = await Train.find(filter).limit(parseInt(limit)).exec();
+        // console.log('Trains trouvés:', trains);
         if (trains.length === 0) {
             return res.status(404).json({ message: 'Aucun train correspondant à cette recherche.' });
         }
         res.status(200).json(trains);
     } catch (error) {
+        // console.error('Erreur lors de la récupération des trains:', error);
         res.status(500).json({ message: 'Erreur lors de la récupération des trains.', error });
     }
 }
@@ -123,15 +137,38 @@ exports.updateTrain = async (req, res) => {
 
         if (loggedUserRole === 'admin') {
             const train = await Train.findById(trainId);
+            console.log('Train trouvé:', train);
             if (!train) {
                 return res.status(404).json({ message: 'Train inconnu' });
             }
-            const updatedTrain = await Train.findByIdAndUpdate(trainId, req.body, { new: true, runValidators: true });
-            res.status(200).json({ message: 'Train modifié', updatedTrain });
+            const { id } = req.params;
+            const { name, start_station, end_station, time_of_departure, time_of_arrival } = req.body;
+
+            // Rechercher les gares par leur nom
+            const startStation = await Station.findOne({ name: start_station });
+            const endStation = await Station.findOne({ name: end_station });
+
+            if (!startStation || !endStation) {
+                return res.status(404).json({ message: 'Une ou plusieurs stations spécifiées sont introuvables.' });
+            }
+
+            const updatedTrain = await Train.findOneAndUpdate(
+                { _id: id },
+                {
+                    name,
+                    start_station: startStation._id,
+                    end_station: endStation._id,
+                    time_of_departure,
+                    time_of_arrival
+                },
+                { new: true }
+            );
+            res.status(200).json({ message: 'Train modifié avec succès.', updatedTrain });
         } else {
             res.status(403).json({ message: 'Vous n\'êtes pas autorisé à modifier ce train.' });
         }
     } catch (error) {
+        console.log('error :', error);
         res.status(500).json({ message: 'Erreur lors de la modification du train.', error });
     }
 }

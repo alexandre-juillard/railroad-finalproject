@@ -34,10 +34,10 @@ const trainCtrl = require('../controllers/trainController');
  *                 type: string
  *                 description: Le nom de la station d'arrivée
  *               time_of_departure:
- *                 type: string
+ *                 type: date
  *                 description: L'heure de départ (format HH:mm)
  *               time_of_arrival:
- *                 type: string
+ *                 type: date
  *                 description: L'heure d'arrivée (format HH:mm)
  *     responses:
  *       201:
@@ -62,8 +62,6 @@ router.post('/', auth, authorize(['admin']), trainCtrl.createTrain);
  *   get:
  *     summary: Récupérer tous les trains
  *     tags: [Train]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: name
@@ -83,13 +81,13 @@ router.post('/', auth, authorize(['admin']), trainCtrl.createTrain);
  *       - in: query
  *         name: time_of_departure
  *         schema:
- *           type: string
+ *           type: date
  *           format: HH:mm
  *         description: Filtrer par heure de départ
  *       - in: query
  *         name: time_of_arrival
  *         schema:
- *           type: string
+ *           type: date
  *           format: HH:mm
  *         description: Filtrer par heure d'arrivée
  *       - in: query
@@ -112,7 +110,7 @@ router.post('/', auth, authorize(['admin']), trainCtrl.createTrain);
  *         description: Erreur serveur
  */
 
-router.get('/', auth, trainCtrl.getAllTrains);
+router.get('/', trainCtrl.getAllTrains);
 
 /**
  * @swagger
@@ -173,10 +171,10 @@ router.get('/:id', auth, trainCtrl.getOneTrain);
  *               end_station:
  *                 type: string
  *               time_of_departure:
- *                 type: string
+ *                 type: date
  *                 format: HH:mm
  *               time_of_arrival:
- *                 type: string
+ *                 type: date
  *                 format: HH:mm
  *     responses:
  *       200:
