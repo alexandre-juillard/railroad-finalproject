@@ -12,11 +12,13 @@ var indexRouter = require('./routes/index');
 const usersRouter = require('./routes/usersRoutes');
 const stationRouter = require('./routes/stationRoutes');
 const trainRouter = require('./routes/trainRoutes');
+const ticketRouter = require('./routes/ticketRoutes');
 
 const app = express();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
+const Ticket = require('./models/Ticket');
 //const { default: mongoose } = require('mongoose');
 
 // Configuration Swagger pour swagger-jsdoc
@@ -26,7 +28,7 @@ const swaggerOptions = {
     info: {
       title: 'Blogify API',
       version: '1.0.0',
-      description: 'API de Blogify pour la gestion des utilisateurs, posts, commentaires et likes',
+      description: 'API de Blogify pour la gestion des utilisateurs, gares, trains et tickets',
     },
     servers: [
       {
@@ -39,14 +41,14 @@ const swaggerOptions = {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
-        },
+        }
       },
       schemas: {
         User: {
           type: 'object',
           properties: {
             _id: {
-              type: 'integer',
+              type: 'string',
               description: 'ID de l\'utilisateur',
             },
             name: {
@@ -74,15 +76,15 @@ const swaggerOptions = {
               type: 'string',
               format: 'date-time',
               description: 'Date de mise à jour de l\'utilisateur',
-            },
+            }
           },
-          required: ['name', 'email', 'password'],
+          required: ['name', 'email', 'password']
         },
         Train: {
           type: 'object',
           properties: {
             _id: {
-              type: 'integer',
+              type: 'string',
               description: 'ID du train',
             },
             name: {
@@ -116,15 +118,15 @@ const swaggerOptions = {
               type: 'string',
               format: 'date-time',
               description: 'Date de mise à jour du train',
-            },
+            }
           },
-          required: ['name', 'start_station', 'end_station', 'time_of_departure', 'time_of_arrival'],
+          required: ['name', 'start_station', 'end_station', 'time_of_departure', 'time_of_arrival']
         },
         Station: {
           type: 'object',
           properties: {
             _id: {
-              type: 'integer',
+              type: 'string',
               description: 'ID de la gare',
             },
             name: {
@@ -152,17 +154,44 @@ const swaggerOptions = {
               type: 'string',
               format: 'date-time',
               description: 'Date de mise à jour de la gare',
-            },
+            }
           },
-          required: ['name', 'open_hour', 'close_hour', 'image'],
+          required: ['name', 'open_hour', 'close_hour', 'image']
+        },
+        Ticket: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'string',
+              description: 'ID du billet',
+            },
+            user: {
+              $ref: '#/components/schemas/User',
+              description: 'Utilisateur ayant réservé le billet',
+            },
+            train: {
+              $ref: '#/components/schemas/Train',
+              description: 'Train réservé',
+            },
+            validated: {
+              type: 'boolean',
+              description: 'Validation du billet',
+            },
+            validationDate: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date de validation du billet',
+            }
+          },
+          required: ['user', 'train']
         }
-      },
+      }
     },
     security: [
       {
         bearerAuth: [],
-      },
-    ],
+      }
+    ]
   },
   apis: ['./routes/*.js'],
 };
@@ -192,6 +221,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/stations', stationRouter);
 app.use('/trains', trainRouter);
+app.use('/tickets', ticketRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
