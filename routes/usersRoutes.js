@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { auth } = require('../middleware/auth');
 const userCtrl = require('../controllers/userController');
+const validateUser = require('../middleware/validationUser');
 
 /**
  * @swagger
@@ -40,7 +41,7 @@ const userCtrl = require('../controllers/userController');
  *         description: Erreur serveur
  */
 
-router.post('/register', userCtrl.register);
+router.post('/register', validateUser, userCtrl.register);
 
 /**
  * @swagger
@@ -166,7 +167,7 @@ router.get('/:id', auth, userCtrl.getOneUser);
  *         description: Erreur serveur
  */
 
-router.put('/:id', auth, userCtrl.updateUser);
+router.put('/:id', validateUser, auth, userCtrl.updateUser);
 
 /**
  * @swagger

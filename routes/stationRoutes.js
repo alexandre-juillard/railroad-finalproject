@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const stationCtrl = require('../controllers/stationController');
+const validateStation = require('../middleware/validationStation');
 const { upload, resizeImage } = require('../middleware/upload');
 const { auth, authorize } = require('../middleware/auth');
 /**
@@ -50,7 +51,7 @@ const { auth, authorize } = require('../middleware/auth');
  *         description: Erreur serveur
  */
 
-router.post('/', auth, authorize(['admin']), upload.single('image'), resizeImage, stationCtrl.createStation);
+router.post('/', validateStation, auth, authorize(['admin']), upload.single('image'), resizeImage, stationCtrl.createStation);
 
 /**
  * @swagger
@@ -129,7 +130,7 @@ router.get('/', auth, stationCtrl.getAllStations);
  *         description: Erreur serveur
  */
 
-router.put('/:id', auth, authorize(['admin']), upload.single('image'), resizeImage, stationCtrl.updateStation);
+router.put('/:id', validateStation, auth, authorize(['admin']), upload.single('image'), resizeImage, stationCtrl.updateStation);
 
 /**
  * @swagger

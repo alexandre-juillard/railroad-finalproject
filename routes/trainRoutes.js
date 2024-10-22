@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { auth, authorize } = require('../middleware/auth');
 const trainCtrl = require('../controllers/trainController');
+const validateTrain = require('../middleware/validationTrain');
 
 /**
  * @swagger
@@ -54,7 +55,7 @@ const trainCtrl = require('../controllers/trainController');
  *         description: Erreur serveur
  */
 
-router.post('/', auth, authorize(['admin']), trainCtrl.createTrain);
+router.post('/', validateTrain, auth, authorize(['admin']), trainCtrl.createTrain);
 
 /**
  * @swagger
@@ -191,7 +192,7 @@ router.get('/:id', auth, trainCtrl.getOneTrain);
  *         description: Erreur serveur
  */
 
-router.put('/:id', auth, authorize(['admin']), trainCtrl.updateTrain);
+router.put('/:id', validateTrain, auth, authorize(['admin']), trainCtrl.updateTrain);
 
 /**
  * @swagger
