@@ -13,7 +13,7 @@ const trainCtrl = require('../controllers/trainController');
  * @swagger
  * /trains:
  *   post:
- *     summary: Créer un nouveau train
+ *     summary: Créer un nouveau train (Admin uniquement)
  *     tags: [Train]
  *     security:
  *       - bearerAuth: []
@@ -146,7 +146,7 @@ router.get('/:id', auth, trainCtrl.getOneTrain);
  * @swagger
  * /trains/{id}:
  *   put:
- *     summary: Mettre à jour un train
+ *     summary: Mettre à jour un train (Admin uniquement)
  *     tags: [Train]
  *     security:
  *       - bearerAuth: []
@@ -197,7 +197,7 @@ router.put('/:id', auth, authorize(['admin']), trainCtrl.updateTrain);
  * @swagger
  * /trains/{id}:
  *   delete:
- *     summary: Supprimer un train
+ *     summary: Supprimer un train (Admin uniquement)
  *     tags: [Train]
  *     security:
  *       - bearerAuth: []

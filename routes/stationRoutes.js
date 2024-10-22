@@ -13,7 +13,7 @@ const { auth, authorize } = require('../middleware/auth');
  * @swagger
  * /stations:
  *   post:
- *     summary: Créer une nouvelle station
+ *     summary: Créer une nouvelle station (Admin uniquement)
  *     tags: [Station]
  *     security:
  *       - bearerAuth: []
@@ -87,7 +87,7 @@ router.get('/', auth, stationCtrl.getAllStations);
  * @swagger
  * /stations/{id}:
  *   put:
- *     summary: Mettre à jour une station
+ *     summary: Mettre à jour une station (Admin uniquement)
  *     tags: [Station]
  *     security:
  *       - bearerAuth: []
@@ -135,7 +135,7 @@ router.put('/:id', auth, authorize(['admin']), upload.single('image'), resizeIma
  * @swagger
  * /stations/{id}:
  *   delete:
- *     summary: Supprimer une station
+ *     summary: Supprimer une station (Admin uniquement)
  *     tags: [Station]
  *     security:
  *       - bearerAuth: []

@@ -201,4 +201,72 @@ router.post('/validate', auth, ticketCtrl.validateTicket);
  */
 router.get('/user-tickets', auth, ticketCtrl.getUserTickets);
 
+/**
+ * @swagger
+ * /tickets/{id}/check-validation:
+ *   get:
+ *     summary: Vérifier la validation d'un billet par ID (Admin uniquement)
+ *     tags: [Billet]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: L'ID du billet à vérifier
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Statut de validation du billet récupéré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 validated:
+ *                   type: boolean
+ *                   description: Statut de validation du billet
+ *                   example: true
+ *                 validationDate:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Date de validation du billet
+ *                   example: "2023-10-20T15:45:00Z"
+ *       403:
+ *         description: Accès refusé (non-admin)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Accès refusé"
+ *       404:
+ *         description: Billet non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Billet non trouvé"
+ *       500:
+ *         description: Erreur serveur lors de la vérification du billet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erreur lors de la vérification de la validation du billet"
+ *                 error:
+ *                   type: string
+ *                   example: "Erreur détaillée"
+ */
+router.get('/:id/check-validation', auth, ticketCtrl.checkTicketValidation);
+
 module.exports = router;

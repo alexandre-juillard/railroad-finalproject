@@ -4,10 +4,14 @@ const Train = require('../models/Train');
 
 exports.createTicket = async (req, res) => {
     try {
-        const { userId, trainId } = req.body;
+        const loggedUserId = req.auth.userId;
+        if (!loggedUserId) {
+            return res.status(401).json({ message: 'Utilisateur non connecté' });
+        }
+        const { trainId } = req.body;
 
         //Verifier si l'utilisateur existe
-        const user = await User.findById(userId);
+        const user = await User.findById(loggedUserId);
         if (!user) {
             return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
@@ -19,7 +23,7 @@ exports.createTicket = async (req, res) => {
         }
 
         const newTicket = new Ticket({
-            user: userId,
+            user: loggedUserId,
             train: trainId
         });
 
@@ -33,10 +37,11 @@ exports.createTicket = async (req, res) => {
 
 exports.validateTicket = async (req, res) => {
     try {
-        const { userId, trainId } = req.body;
+        const loggedUserId = req.auth.userId;
+        const { trainId } = req.body;
 
         //Verifier si l'utilisateur existe
-        const user = await User.findById(userId);
+        const user = await User.findById(loggedUserId);
         if (!user) {
             return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
@@ -48,7 +53,7 @@ exports.validateTicket = async (req, res) => {
         }
 
         //Verifier si le billet existe
-        const ticket = await Ticket.findOne({ user: userId, train: trainId });
+        const ticket = await Ticket.findOne({ user: loggedUserId, train: trainId });
         if (!ticket) {
             return res.status(404).json({ message: 'Billet non trouvé' });
         }
@@ -72,8 +77,8 @@ exports.validateTicket = async (req, res) => {
 exports.getUserTickets = async (req, res) => {
     try {
         //Verifier si l'utilisateur est connecté
-        const loggedUser = req.auth.userId;
-        const user = await User.findById(loggedUser);
+        const loggedUserId = req.auth.userId;
+        const user = await User.findById(loggedUserId);
         if (!user) {
             return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
@@ -85,5 +90,25 @@ exports.getUserTickets = async (req, res) => {
     } catch (error) {
         console.log('Erreur de récupération des billets : ', error);
         res.status(500).json({ message: 'Erreur lors de la récupération des billets', error });
+    }
+};
+
+exports.checkTicketValidation = async (req, res) => {
+    try {
+        const loggedUser = req.auth;
+        if (loggedUser.role === 'admin') {
+            const ticketId = req.params.id;
+            const ticket = await Ticket.findById(ticketId);
+            if (!ticket) {
+                return res.status(404).json({ message: 'Billet non trouvé' });
+            } else {
+                return res.status(200).json({ validated: ticket.validated, validationDate: ticket.validationDate });
+            }
+        } else {
+            return res.status(403).json({ message: 'Accès refusé' });
+        }
+    } catch (error) {
+        // console.log('Erreur de vérification de la validation du billet : ', error);
+        res.status(500).json({ message: 'Erreur lors de la vérification de la validation du billet', error });
     }
 };
