@@ -75,7 +75,8 @@ Routes principales
 - Billets
     - `POST /tickets/create` : Créer un billet de transport
     - `POST /tickets/validate` : Valider un billet de transport
-    - `GET /tickets` : Voir les billets existants 
+    - `GET /tickets/user-tickets` : Voir les billets existants d'un utilisateur connecté
+    - `GET /tickets/:id/check-validation` : Vérifier la validité d'un ticket
 
 ## Tests
 
