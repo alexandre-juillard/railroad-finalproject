@@ -146,43 +146,37 @@ router.post('/validate', auth, ticketCtrl.validateTicket);
 
 /**
  * @swagger
- * /tickets/{id}:
+ * /tickets/user-tickets:
  *   get:
- *     summary: Récupérer les détails d'un billet
+ *     summary: Récupérer tous les billets de l'utilisateur connecté
  *     tags: [Billet]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: L'ID du billet à récupérer
- *         schema:
- *           type: string
  *     responses:
  *       200:
- *         description: Billet récupéré avec succès
+ *         description: Liste des billets de l'utilisateur connecté
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 user:
- *                   type: string
- *                   description: L'ID de l'utilisateur ayant réservé le billet
- *                 train:
- *                   type: string
- *                   description: L'ID du train associé au billet
- *                 validated:
- *                   type: boolean
- *                   description: Statut de validation du billet
- *                   example: false
- *                 validationDate:
- *                   type: string
- *                   format: date-time
- *                   description: Date de validation du billet
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   user:
+ *                     type: string
+ *                   train:
+ *                     type: string
+ *                   validated:
+ *                     type: boolean
+ *                     example: false
+ *                   validationDate:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2021-06-22T10:00:00.000Z"
  *       404:
- *         description: Billet non trouvé
+ *         description: Utilisateur ou billets non trouvés
  *         content:
  *           application/json:
  *             schema:
@@ -190,9 +184,9 @@ router.post('/validate', auth, ticketCtrl.validateTicket);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Billet non trouvé
+ *                   example: "Utilisateur non trouvé"
  *       500:
- *         description: Erreur serveur lors de la récupération du billet
+ *         description: Erreur serveur lors de la récupération des billets
  *         content:
  *           application/json:
  *             schema:
@@ -200,11 +194,11 @@ router.post('/validate', auth, ticketCtrl.validateTicket);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Erreur lors de la récupération du billet
+ *                   example: "Erreur lors de la récupération des billets"
  *                 error:
  *                   type: string
  *                   example: "Erreur détaillée"
  */
-router.get('/:id', auth, ticketCtrl.getOneTicket);
+router.get('/user-tickets', auth, ticketCtrl.getUserTickets);
 
 module.exports = router;

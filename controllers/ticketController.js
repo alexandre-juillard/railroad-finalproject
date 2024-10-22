@@ -69,15 +69,21 @@ exports.validateTicket = async (req, res) => {
     }
 };
 
-exports.getOneTicket = async (req, res) => {
+exports.getUserTickets = async (req, res) => {
     try {
-        const ticket = await Ticket.findById(req.params.id);
-        if (!ticket) {
+        //Verifier si l'utilisateur est connecté
+        const loggedUser = req.auth.userId;
+        const user = await User.findById(loggedUser);
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        }
+        const tickets = await Ticket.find({ user: loggedUserId });
+        if (!tickets) {
             return res.status(404).json({ message: 'Billet non trouvé' });
         }
-        res.status(200).json(ticket);
+        res.status(200).json(tickets);
     } catch (error) {
-        console.log('Erreur de récupération du billet : ', error);
-        res.status(500).json({ message: 'Erreur lors de la récupération du billet', error });
+        console.log('Erreur de récupération des billets : ', error);
+        res.status(500).json({ message: 'Erreur lors de la récupération des billets', error });
     }
 };
