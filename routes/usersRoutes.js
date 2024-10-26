@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { auth } = require('../middleware/auth');
+const { auth, authorize } = require('../middleware/auth');
 const userCtrl = require('../controllers/userController');
 const validateUser = require('../middleware/validationUser');
 
@@ -96,7 +96,7 @@ router.post('/login', userCtrl.login);
  *         description: Erreur serveur
  */
 
-router.get('/', auth, userCtrl.getAllUsers);
+router.get('/', auth, authorize(['admin']), userCtrl.getAllUsers);
 
 /**
  * @swagger
