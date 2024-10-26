@@ -46,6 +46,8 @@ La documentation Swagger de l'API est disponible à l'URL suivante après avoir 
 
 `http://localhost:3000/api-docs`
 
+Sur cette page, toute les URL ci-dessous seront disponibles. Vous pourrez interagir avec celles-ci. Pour simuler une connexion, il faudra au préalable créer un compte avec `/users/register`, puis se connecter avec ce même compte dans `/users/login`. Cette dernière URL renverra un JWT, qu'il faudra copier et coller dans l'onglet AUTHORIZE situé en haut à droite de l'écran, afin de maintenir la connexion. Un rechargement de page coupera cette connexion.
+
 ## Utilisation
 
 Routes principales
