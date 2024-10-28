@@ -1,6 +1,16 @@
 const Ticket = require('../models/Ticket');
 const User = require('../models/User');
 const Train = require('../models/Train');
+const Counter = require('../models/Counter');
+
+async function getNextSequenceValue(sequenceName) {
+    const sequenceDocument = await Counter.findByIdAndUpdate(
+        sequenceName,
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+    );
+    return sequenceDocument.seq;
+}
 
 exports.createTicket = async (req, res) => {
     try {
@@ -9,6 +19,7 @@ exports.createTicket = async (req, res) => {
             return res.status(401).json({ message: 'Utilisateur non connecté' });
         }
         const { trainId } = req.body;
+        const ticketId = await getNextSequenceValue('ticketId');
 
         //Verifier si l'utilisateur existe
         const user = await User.findById(loggedUserId);
@@ -23,6 +34,7 @@ exports.createTicket = async (req, res) => {
         }
 
         const newTicket = new Ticket({
+            _id: ticketId,
             user: loggedUserId,
             train: trainId
         });
@@ -38,7 +50,7 @@ exports.createTicket = async (req, res) => {
 exports.validateTicket = async (req, res) => {
     try {
         const loggedUserId = req.auth.userId;
-        const { trainId } = req.body;
+        const { ticketId } = req.body;
 
         //Verifier si l'utilisateur existe
         const user = await User.findById(loggedUserId);
@@ -46,14 +58,8 @@ exports.validateTicket = async (req, res) => {
             return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
 
-        //Verifier si le train existe
-        const train = await Train.findById(trainId);
-        if (!train) {
-            return res.status(404).json({ message: 'Train non trouvé' });
-        }
-
         //Verifier si le billet existe
-        const ticket = await Ticket.findOne({ user: loggedUserId, train: trainId });
+        const ticket = await Ticket.findById(ticketId);
         if (!ticket) {
             return res.status(404).json({ message: 'Billet non trouvé' });
         }
@@ -66,6 +72,7 @@ exports.validateTicket = async (req, res) => {
         //Valider le billet
         ticket.validated = true;
         ticket.validationDate = new Date();
+        await ticket.save();
 
         res.status(200).json({ message: 'Billet validé avec succès' });
     } catch (error) {

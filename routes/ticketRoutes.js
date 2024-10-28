@@ -24,9 +24,6 @@ const { auth } = require('../middleware/auth');
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: string
- *                 description: L'ID de l'utilisateur qui réserve le billet
  *               trainId:
  *                 type: string
  *                 description: L'ID du train pour lequel le billet est réservé
@@ -91,12 +88,9 @@ router.post('/create', auth, ticketCtrl.createTicket);
  *           schema:
  *             type: object
  *             properties:
- *               userId:
+ *               ticketId:
  *                 type: string
- *                 description: L'ID de l'utilisateur qui possède le billet
- *               trainId:
- *                 type: string
- *                 description: L'ID du train associé au billet
+ *                 description: L'ID du billet
  *     responses:
  *       200:
  *         description: Billet validé avec succès
